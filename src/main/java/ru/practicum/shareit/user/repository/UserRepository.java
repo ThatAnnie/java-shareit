@@ -8,11 +8,11 @@ import java.util.Optional;
 public interface UserRepository {
     User createUser(User user);
 
-    User updateUser(long userId, User user);
+    User updateUser(Long userId, User user);
 
-    void deleteUser(long userId);
+    void deleteUser(Long userId);
 
-    Optional<User> getUserById(long userId);
+    Optional<User> getUserById(Long userId);
 
     List<User> getUsers();
 }

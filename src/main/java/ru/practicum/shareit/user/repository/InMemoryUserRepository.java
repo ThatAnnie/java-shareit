@@ -18,19 +18,19 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public User updateUser(long userId, User user) {
+    public User updateUser(Long userId, User user) {
         user.setId(userId);
         users.put(userId, user);
         return user;
     }
 
     @Override
-    public void deleteUser(long userId) {
+    public void deleteUser(Long userId) {
         users.remove(userId);
     }
 
     @Override
-    public Optional<User> getUserById(long userId) {
+    public Optional<User> getUserById(Long userId) {
         if (users.containsKey(userId)) {
             return Optional.ofNullable(users.get(userId));
         } else {
