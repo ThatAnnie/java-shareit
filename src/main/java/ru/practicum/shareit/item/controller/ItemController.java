@@ -31,6 +31,12 @@ public class ItemController {
         return itemService.updateItem(userId, itemId, item);
     }
 
+    @DeleteMapping("/{itemId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteItem(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId) {
+        itemService.deleteItem(userId, itemId);
+    }
+
     @GetMapping("/{itemId}")
     @ResponseStatus(HttpStatus.OK)
     public ItemDto getItem(@PathVariable Long itemId) {

@@ -9,6 +9,8 @@ public interface ItemService {
 
     ItemDto updateItem(Long userId, Long itemId, ItemDto item);
 
+    void deleteItem(Long userId, Long itemId);
+
     ItemDto getItemById(Long itemId);
 
     List<ItemDto> getUserItems(Long userId);

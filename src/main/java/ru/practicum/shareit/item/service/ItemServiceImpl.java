@@ -57,6 +57,20 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    public void deleteItem(Long userId, Long itemId) {
+        log.info("deleteItem: id = {}, userId = {}", itemId, userId);
+        Item deleteItem = itemRepository.getItemById(itemId).orElseThrow(() -> {
+            log.warn("item with id={} not exist", itemId);
+            throw new EntityNotExistException(String.format("Вещь с id=%d не существует.", itemId));
+        });
+        if (!deleteItem.getOwner().getId().equals(userId)) {
+            log.warn("user with id={} is not owner of item with id={}", userId, itemId);
+            throw new EntityNotExistException(String.format("Пользователь с id=%d не владелец вещи.", userId));
+        }
+        itemRepository.deleteItem(itemId);
+    }
+
+    @Override
     public ItemDto getItemById(Long itemId) {
         log.info("getItemById with id={}", itemId);
         Item item = itemRepository.getItemById(itemId).orElseThrow(() -> {

@@ -30,29 +30,11 @@ public class ErrorHandler {
         );
     }
 
-    @ExceptionHandler
+    @ExceptionHandler({MethodArgumentNotValidException.class, ValidationException.class, MissingRequestHeaderException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleNotValidException(final MethodArgumentNotValidException e) {
+    public Map<String, String> handleNotValidException(final Exception e) {
         return Map.of(
                 "error", "Not valid data",
-                "errorMessage", e.getMessage()
-        );
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleValidationException(final ValidationException e) {
-        return Map.of(
-                "error", "Not valid data",
-                "errorMessage", e.getMessage()
-        );
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleMissingRequestHeaderException(final MissingRequestHeaderException e) {
-        return Map.of(
-                "error", "RequestHeader X-Sharer-User-Id not found",
                 "errorMessage", e.getMessage()
         );
     }

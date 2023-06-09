@@ -26,6 +26,11 @@ public class InMemoryItemRepository implements ItemRepository {
     }
 
     @Override
+    public void deleteItem(Long itemId) {
+        items.remove(itemId);
+    }
+
+    @Override
     public Optional<Item> getItemById(Long itemId) {
         if (items.containsKey(itemId)) {
             return Optional.ofNullable(items.get(itemId));
