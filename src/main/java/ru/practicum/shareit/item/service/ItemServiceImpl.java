@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.EntityNotExistException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
@@ -15,28 +16,31 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     @Override
     public ItemDto createItem(Long userId, ItemDto itemDto) {
         log.info("createItem: {}, userId={}", itemDto, userId);
-        userRepository.getUserById(userId).orElseThrow(() -> {
+        userRepository.findById(userId).orElseThrow(() -> {
             log.warn("user with id={} not exist", userId);
             throw new EntityNotExistException(String.format("Пользователь с id=%d не существует.", userId));
         });
         Item item = ItemMapper.itemDtoToItem(itemDto);
-        item.setOwner(userRepository.getUserById(userId).get());
-        return ItemMapper.itemToItemDto(itemRepository.createItem(item));
+        item.setOwner(userRepository.findById(userId).get());
+        return ItemMapper.itemToItemDto(itemRepository.save(item));
     }
 
+    @Transactional
     @Override
     public ItemDto updateItem(Long userId, Long itemId, ItemDto itemDto) {
         log.info("updateItem: {}", itemDto);
-        Item updateItem = itemRepository.getItemById(itemId).orElseThrow(() -> {
+        Item updateItem = itemRepository.findById(itemId).orElseThrow(() -> {
             log.warn("item with id={} not exist", itemId);
             throw new EntityNotExistException(String.format("Вещь с id=%d не существует.", itemId));
         });
@@ -53,13 +57,14 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getAvailable() != null) {
             updateItem.setAvailable(itemDto.getAvailable());
         }
-        return ItemMapper.itemToItemDto(itemRepository.updateItem(itemId, updateItem));
+        return ItemMapper.itemToItemDto(itemRepository.save(updateItem));
     }
 
+    @Transactional
     @Override
     public void deleteItem(Long userId, Long itemId) {
         log.info("deleteItem: id = {}, userId = {}", itemId, userId);
-        Item deleteItem = itemRepository.getItemById(itemId).orElseThrow(() -> {
+        Item deleteItem = itemRepository.findById(itemId).orElseThrow(() -> {
             log.warn("item with id={} not exist", itemId);
             throw new EntityNotExistException(String.format("Вещь с id=%d не существует.", itemId));
         });
@@ -67,13 +72,13 @@ public class ItemServiceImpl implements ItemService {
             log.warn("user with id={} is not owner of item with id={}", userId, itemId);
             throw new EntityNotExistException(String.format("Пользователь с id=%d не владелец вещи.", userId));
         }
-        itemRepository.deleteItem(itemId);
+        itemRepository.deleteById(itemId);
     }
 
     @Override
     public ItemDto getItemById(Long itemId) {
         log.info("getItemById with id={}", itemId);
-        Item item = itemRepository.getItemById(itemId).orElseThrow(() -> {
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> {
             log.warn("item with id={} not exist", itemId);
             throw new EntityNotExistException(String.format("Вещь с id=%d не существует.", itemId));
         });
@@ -83,11 +88,11 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> getUserItems(Long userId) {
         log.info("getUserItems by user with id={}", userId);
-        userRepository.getUserById(userId).orElseThrow(() -> {
+        userRepository.findById(userId).orElseThrow(() -> {
             log.warn("user with id={} not exist", userId);
             throw new EntityNotExistException(String.format("Пользователь с id=%d не существует.", userId));
         });
-        return itemRepository.getUserItems(userId).stream()
+        return itemRepository.findByOwnerId(userId).stream()
                 .map(ItemMapper::itemToItemDto)
                 .collect(Collectors.toList());
     }
