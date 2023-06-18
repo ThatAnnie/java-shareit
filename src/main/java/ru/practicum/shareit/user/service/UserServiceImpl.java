@@ -2,6 +2,7 @@ package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.EntityAlreadyExistException;
@@ -30,12 +31,12 @@ public class UserServiceImpl implements UserService {
             log.warn("can't create user with no email");
             throw new ValidationException("Невозможно создать пользователя без email");
         }
-        if (userRepository.findAll().stream().anyMatch(user -> user.getEmail().equals(userDto.getEmail()))) {
-            log.warn("user with email {} already exist", userDto.getEmail());
+        try {
+            User user = userRepository.save(UserMapper.userDtoToUser(userDto));
+            return UserMapper.userToUserDto(user);
+        } catch (DataIntegrityViolationException ex) {
             throw new EntityAlreadyExistException(String.format("Пользователь с email=%s уже существует.", userDto.getEmail()));
         }
-        User user = userRepository.save(UserMapper.userDtoToUser(userDto));
-        return UserMapper.userToUserDto(user);
     }
 
     @Transactional
