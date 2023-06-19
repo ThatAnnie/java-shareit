@@ -17,37 +17,38 @@ import java.util.List;
 @RequestMapping("/items")
 @RequiredArgsConstructor
 public class ItemController {
+    private static final String USER_HEADER = "X-Sharer-User-Id";
     private final ItemService itemService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDto createItem(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ItemDto createItem(@RequestHeader(USER_HEADER) Long userId,
                               @Validated(CreateGroup.class) @RequestBody ItemDto item) {
         return itemService.createItem(userId, item);
     }
 
     @PatchMapping("/{itemId}")
     @ResponseStatus(HttpStatus.OK)
-    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId,
+    public ItemDto updateItem(@RequestHeader(USER_HEADER) Long userId, @PathVariable Long itemId,
                               @Valid @RequestBody ItemDto item) {
         return itemService.updateItem(userId, itemId, item);
     }
 
     @DeleteMapping("/{itemId}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteItem(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId) {
+    public void deleteItem(@RequestHeader(USER_HEADER) Long userId, @PathVariable Long itemId) {
         itemService.deleteItem(userId, itemId);
     }
 
     @GetMapping("/{itemId}")
     @ResponseStatus(HttpStatus.OK)
-    public ItemDto getItem(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId) {
+    public ItemDto getItem(@RequestHeader(USER_HEADER) Long userId, @PathVariable Long itemId) {
         return itemService.getItemById(userId, itemId);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ItemBookingDto> getUserItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemBookingDto> getUserItems(@RequestHeader(USER_HEADER) Long userId) {
         return itemService.getUserItems(userId);
     }
 
@@ -58,7 +59,7 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentDto createComment(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long itemId,
+    public CommentDto createComment(@RequestHeader(USER_HEADER) Long userId, @PathVariable Long itemId,
                                     @Valid @RequestBody CommentDto commentDto) {
         return itemService.createComment(userId, itemId, commentDto);
     }

@@ -1,11 +1,13 @@
 package ru.practicum.shareit.item.mapper;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.item.dto.ItemBookingDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
+@UtilityClass
 public class ItemMapper {
-    public static ItemDto itemToItemDto(Item item) {
+    public ItemDto itemToItemDto(Item item) {
         if (item == null) {
             return new ItemDto();
         }
@@ -17,7 +19,7 @@ public class ItemMapper {
         return itemDto;
     }
 
-    public static Item itemDtoToItem(ItemDto itemDto) {
+    public Item itemDtoToItem(ItemDto itemDto) {
         if (itemDto == null) {
             return new Item();
         }
@@ -29,7 +31,7 @@ public class ItemMapper {
         return item;
     }
 
-    public static ItemBookingDto itemToItemBookingDto(Item item) {
+    public ItemBookingDto itemToItemBookingDto(Item item) {
         if (item == null) {
             return new ItemBookingDto();
         }

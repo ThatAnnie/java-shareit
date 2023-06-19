@@ -21,7 +21,6 @@ import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -82,7 +81,7 @@ public class BookingServiceImpl implements BookingService {
             log.warn("booking with not WAITING status");
             throw new OperationNotAllowed("Бронирование не в статусе ожидания подтверждения.");
         }
-        return BookingMapper.bookingToBookingResponseDto(bookingRepository.save(booking));
+        return BookingMapper.bookingToBookingResponseDto(booking);
     }
 
     @Override
@@ -118,13 +117,13 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> bookingList;
         switch (bookingState) {
             case ALL:
-                bookingList = bookingRepository.findAllByBookerId(userId);
+                bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(userId);
                 break;
             case PAST:
-                bookingList = bookingRepository.findAllByBookerIdAndEndIsBefore(userId, LocalDateTime.now());
+                bookingList = bookingRepository.findAllByBookerIdAndEndIsBeforeOrderByStartDesc(userId, LocalDateTime.now());
                 break;
             case FUTURE:
-                bookingList = bookingRepository.findAllByBookerIdAndStartIsAfter(userId, LocalDateTime.now());
+                bookingList = bookingRepository.findAllByBookerIdAndStartIsAfterOrderByStartDesc(userId, LocalDateTime.now());
                 break;
             case CURRENT:
                 bookingList = bookingRepository.findAllByBookerCurrentDate(userId, LocalDateTime.now());
@@ -139,7 +138,6 @@ public class BookingServiceImpl implements BookingService {
                 bookingList = new ArrayList<>();
         }
         return bookingList.stream()
-                .sorted(Comparator.comparing(Booking::getStart).reversed())
                 .map(BookingMapper::bookingToBookingResponseDto)
                 .collect(Collectors.toList());
     }
@@ -182,7 +180,6 @@ public class BookingServiceImpl implements BookingService {
                 bookingList = new ArrayList<>();
         }
         return bookingList.stream()
-                .sorted(Comparator.comparing(Booking::getStart).reversed())
                 .map(BookingMapper::bookingToBookingResponseDto)
                 .collect(Collectors.toList());
     }

@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
         if (userDto.getName() != null) {
             updateUser.setName(userDto.getName());
         }
-        return UserMapper.userToUserDto(userRepository.save(updateUser));
+        return UserMapper.userToUserDto(updateUser);
     }
 
     @Transactional
