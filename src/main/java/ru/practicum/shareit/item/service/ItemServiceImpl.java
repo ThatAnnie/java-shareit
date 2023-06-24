@@ -41,12 +41,12 @@ public class ItemServiceImpl implements ItemService {
         List<Booking> lastBookings = bookingRepository.findItemLastBookings(item.getId(),
                 LocalDateTime.now());
         if (!lastBookings.isEmpty()) {
-            item.setLastBooking(BookingMapper.bookingToBookingForItemDto(lastBookings.get(0)));
+            item.setLastBooking(BookingMapper.INSTANCE.bookingToBookingForItemDto(lastBookings.get(0)));
         }
         List<Booking> nextBookings = bookingRepository.findItemNextBookings(item.getId(),
                 LocalDateTime.now());
         if (!nextBookings.isEmpty()) {
-            item.setNextBooking(BookingMapper.bookingToBookingForItemDto(nextBookings.get(0)));
+            item.setNextBooking(BookingMapper.INSTANCE.bookingToBookingForItemDto(nextBookings.get(0)));
         }
     }
 
@@ -58,9 +58,9 @@ public class ItemServiceImpl implements ItemService {
             log.warn("user with id={} not exist", userId);
             throw new EntityNotExistException(String.format("Пользователь с id=%d не существует.", userId));
         });
-        Item item = ItemMapper.itemDtoToItem(itemDto);
+        Item item = ItemMapper.INSTANCE.itemDtoToItem(itemDto);
         item.setOwner(userRepository.findById(userId).get());
-        return ItemMapper.itemToItemDto(itemRepository.save(item));
+        return ItemMapper.INSTANCE.itemToItemDto(itemRepository.save(item));
     }
 
     @Transactional
@@ -84,7 +84,7 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getAvailable() != null) {
             updateItem.setAvailable(itemDto.getAvailable());
         }
-        return ItemMapper.itemToItemDto(updateItem);
+        return ItemMapper.INSTANCE.itemToItemDto(updateItem);
     }
 
     @Transactional
@@ -110,12 +110,12 @@ public class ItemServiceImpl implements ItemService {
             throw new EntityNotExistException(String.format("Вещь с id=%d не существует.", itemId));
         });
         Long ownerId = item.getOwner().getId();
-        ItemBookingDto itemBookingDto = ItemMapper.itemToItemBookingDto(item);
+        ItemBookingDto itemBookingDto = ItemMapper.INSTANCE.itemToItemBookingDto(item);
         if (ownerId.equals(userId)) {
             setBookingDates(itemBookingDto);
         }
         List<CommentDto> commentsDto = commentRepository.findAllByItemIdOrderById(itemId).stream()
-                .map(CommentMapper::commentToCommentDto)
+                .map(CommentMapper.INSTANCE::commentToCommentDto)
                 .collect(Collectors.toList());
         itemBookingDto.setComments(commentsDto);
         return itemBookingDto;
@@ -129,7 +129,7 @@ public class ItemServiceImpl implements ItemService {
             throw new EntityNotExistException(String.format("Пользователь с id=%d не существует.", userId));
         });
         List<ItemBookingDto> itemBookingDtoList = itemRepository.findByOwnerId(userId).stream()
-                .map(ItemMapper::itemToItemBookingDto)
+                .map(ItemMapper.INSTANCE::itemToItemBookingDto)
                 .collect(Collectors.toList());
         itemBookingDtoList.forEach(this::setBookingDates);
         itemBookingDtoList.sort(Comparator.comparing(ItemBookingDto::getId));
@@ -143,7 +143,7 @@ public class ItemServiceImpl implements ItemService {
             return new ArrayList<>();
         }
         return itemRepository.searchItem(text).stream()
-                .map(ItemMapper::itemToItemDto)
+                .map(ItemMapper.INSTANCE::itemToItemDto)
                 .collect(Collectors.toList());
     }
 
@@ -163,10 +163,10 @@ public class ItemServiceImpl implements ItemService {
             log.warn("user with id={} hasn't booked item with id={}", userId, itemId);
             throw new ValidationException(String.format("Пользователь с id=%d не бронировал вещь с id=%d.", userId, itemId));
         });
-        Comment comment = CommentMapper.commentDtoToComment(commentDto);
+        Comment comment = CommentMapper.INSTANCE.commentDtoToComment(commentDto);
         comment.setAuthor(author);
         comment.setItem(item);
         comment.setCreated(LocalDateTime.now());
-        return CommentMapper.commentToCommentDto(commentRepository.save(comment));
+        return CommentMapper.INSTANCE.commentToCommentDto(commentRepository.save(comment));
     }
 }

@@ -1,44 +1,31 @@
 package ru.practicum.shareit.booking.mapper;
 
-import lombok.experimental.UtilityClass;
+import org.mapstruct.InjectionStrategy;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
+import org.mapstruct.factory.Mappers;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingForItemDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemBookingDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.mapper.UserMapper;
 
-@UtilityClass
-public class BookingMapper {
-    public Booking bookingDtoToBooking(BookingDto bookingDto) {
-        Booking booking = new Booking();
-        booking.setId(bookingDto.getId());
-        booking.setStart(bookingDto.getStart());
-        booking.setEnd(bookingDto.getEnd());
-        return booking;
-    }
+@Mapper(injectionStrategy = InjectionStrategy.CONSTRUCTOR, uses = {UserMapper.class, ItemMapper.class})
+public interface BookingMapper {
+    BookingMapper INSTANCE = Mappers.getMapper(BookingMapper.class);
 
-    public BookingResponseDto bookingToBookingResponseDto(Booking booking) {
-        BookingResponseDto bookingResponseDto = new BookingResponseDto();
-        bookingResponseDto.setId(booking.getId());
-        bookingResponseDto.setStart(booking.getStart());
-        bookingResponseDto.setEnd(booking.getEnd());
-        ItemDto itemDto = ItemMapper.itemToItemDto(booking.getItem());
-        bookingResponseDto.setItem(itemDto);
-        UserDto bookerDto = UserMapper.userToUserDto(booking.getBooker());
-        bookingResponseDto.setBooker(bookerDto);
-        bookingResponseDto.setStatus(booking.getStatus());
-        return bookingResponseDto;
-    }
+    Booking bookingDtoToBooking(BookingDto bookingDto);
 
-    public BookingForItemDto bookingToBookingForItemDto(Booking booking) {
-        BookingForItemDto bookingForItemDto = new BookingForItemDto();
-        bookingForItemDto.setId(booking.getId());
-        bookingForItemDto.setEnd(booking.getEnd());
-        bookingForItemDto.setStart(booking.getStart());
-        bookingForItemDto.setBookerId(booking.getBooker().getId());
-        return bookingForItemDto;
-    }
+    @Mapping(source = "item", target = "item", qualifiedByName = "mapItemDto")
+    BookingResponseDto bookingToBookingResponseDto(Booking booking);
+
+    @Named("mapItemDto")
+    ItemBookingDto mapItemDto(Item item);
+
+    @Mapping(target = "bookerId", source = "booker.id")
+    BookingForItemDto bookingToBookingForItemDto(Booking booking);
 }

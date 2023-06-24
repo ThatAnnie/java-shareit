@@ -51,7 +51,7 @@ public class BookingServiceImpl implements BookingService {
             log.warn("item with id={} not available", itemId);
             throw new OperationNotAllowed(String.format("Вещь с id=%d недоступна.", itemId));
         }
-        Booking booking = BookingMapper.bookingDtoToBooking(bookingDto);
+        Booking booking = BookingMapper.INSTANCE.bookingDtoToBooking(bookingDto);
         booking.setItem(item);
         booking.setBooker(booker);
         booking.setStatus(BookingStatus.WAITING);
@@ -59,7 +59,7 @@ public class BookingServiceImpl implements BookingService {
             log.warn("item can't be booked by owner");
             throw new EntityNotExistException("Вещь не может быть забронирована владельцем.");
         }
-        return BookingMapper.bookingToBookingResponseDto(bookingRepository.save(booking));
+        return BookingMapper.INSTANCE.bookingToBookingResponseDto(bookingRepository.save(booking));
     }
 
     @Override
@@ -81,7 +81,7 @@ public class BookingServiceImpl implements BookingService {
             log.warn("booking with not WAITING status");
             throw new OperationNotAllowed("Бронирование не в статусе ожидания подтверждения.");
         }
-        return BookingMapper.bookingToBookingResponseDto(booking);
+        return BookingMapper.INSTANCE.bookingToBookingResponseDto(booking);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class BookingServiceImpl implements BookingService {
             log.warn("user with id={} is not allowed to get this booking", userId);
             throw new EntityNotExistException(String.format("Пользователь с id=%d не может просматривать это бронирование.", userId));
         }
-        return BookingMapper.bookingToBookingResponseDto(booking);
+        return BookingMapper.INSTANCE.bookingToBookingResponseDto(booking);
     }
 
     @Override
@@ -138,7 +138,7 @@ public class BookingServiceImpl implements BookingService {
                 bookingList = new ArrayList<>();
         }
         return bookingList.stream()
-                .map(BookingMapper::bookingToBookingResponseDto)
+                .map(BookingMapper.INSTANCE::bookingToBookingResponseDto)
                 .collect(Collectors.toList());
     }
 
@@ -180,7 +180,7 @@ public class BookingServiceImpl implements BookingService {
                 bookingList = new ArrayList<>();
         }
         return bookingList.stream()
-                .map(BookingMapper::bookingToBookingResponseDto)
+                .map(BookingMapper.INSTANCE::bookingToBookingResponseDto)
                 .collect(Collectors.toList());
     }
 }

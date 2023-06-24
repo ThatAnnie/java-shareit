@@ -12,12 +12,13 @@ import ru.practicum.shareit.booking.service.BookingService;
 import javax.validation.Valid;
 import java.util.List;
 
+import static ru.practicum.shareit.item.controller.ItemController.USER_HEADER;
+
 @RestController
 @RequestMapping(path = "/bookings")
 @RequiredArgsConstructor
 @Validated
 public class BookingController {
-    private static final String USER_HEADER = "X-Sharer-User-Id";
     private final BookingService bookingService;
 
     @PostMapping

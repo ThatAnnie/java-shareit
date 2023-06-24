@@ -32,8 +32,8 @@ public class UserServiceImpl implements UserService {
             throw new ValidationException("Невозможно создать пользователя без email");
         }
         try {
-            User user = userRepository.save(UserMapper.userDtoToUser(userDto));
-            return UserMapper.userToUserDto(user);
+            User user = userRepository.save(UserMapper.INSTANCE.userDtoToUser(userDto));
+            return UserMapper.INSTANCE.userToUserDto(user);
         } catch (DataIntegrityViolationException ex) {
             throw new EntityAlreadyExistException(String.format("Пользователь с email=%s уже существует.", userDto.getEmail()));
         }
@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
         if (userDto.getName() != null) {
             updateUser.setName(userDto.getName());
         }
-        return UserMapper.userToUserDto(updateUser);
+        return UserMapper.INSTANCE.userToUserDto(updateUser);
     }
 
     @Transactional
@@ -79,14 +79,14 @@ public class UserServiceImpl implements UserService {
             log.warn("user with id={} not exist", userId);
             throw new EntityNotExistException(String.format("Пользователь с id=%d не существует.", userId));
         });
-        return UserMapper.userToUserDto(user);
+        return UserMapper.INSTANCE.userToUserDto(user);
     }
 
     @Override
     public List<UserDto> getUsers() {
         log.info("getUsers");
         return userRepository.findAll().stream()
-                .map(UserMapper::userToUserDto)
+                .map(UserMapper.INSTANCE::userToUserDto)
                 .collect(Collectors.toList());
     }
 }
