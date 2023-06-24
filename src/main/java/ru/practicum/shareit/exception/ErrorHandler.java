@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.ConstraintViolationException;
 import java.util.Map;
 
 @RestControllerAdvice
@@ -22,6 +23,23 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleOperationNotAllowedException(final OperationNotAllowed e) {
+        return Map.of(
+                "error", "Not allowed",
+                "errorMessage", e.getMessage()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleStateIsNotSupportedException(final StateIsNotSupportedException e) {
+        return Map.of(
+                "error", e.getMessage()
+        );
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public Map<String, String> handleAlreadyExistException(final EntityAlreadyExistException e) {
         return Map.of(
@@ -30,9 +48,9 @@ public class ErrorHandler {
         );
     }
 
-    @ExceptionHandler({MethodArgumentNotValidException.class, ValidationException.class, MissingRequestHeaderException.class})
+    @ExceptionHandler({MethodArgumentNotValidException.class, ValidationException.class, MissingRequestHeaderException.class, ConstraintViolationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleNotValidException(final Exception e) {
+    public Map<String, String> handleNotValidException(Exception e) {
         return Map.of(
                 "error", "Not valid data",
                 "errorMessage", e.getMessage()
