@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
@@ -18,6 +19,8 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -36,6 +39,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository requestRepository;
 
     private void setBookingDates(ItemBookingDto item) {
         List<Booking> lastBookings = bookingRepository.findItemLastBookings(item.getId(),
@@ -60,6 +64,14 @@ public class ItemServiceImpl implements ItemService {
         });
         Item item = ItemMapper.INSTANCE.itemDtoToItem(itemDto);
         item.setOwner(userRepository.findById(userId).get());
+        Long requestId = itemDto.getRequestId();
+        if (requestId != null) {
+            ItemRequest itemRequest = requestRepository.findById(requestId).orElseThrow(() -> {
+                log.warn("request with id={} not exist", requestId);
+                throw new EntityNotExistException(String.format("Запрос с id=%d не существует.", requestId));
+            });
+            item.setRequest(itemRequest);
+        }
         return ItemMapper.INSTANCE.itemToItemDto(itemRepository.save(item));
     }
 
@@ -122,13 +134,14 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemBookingDto> getUserItems(Long userId) {
+    public List<ItemBookingDto> getUserItems(Long userId, Integer from, Integer size) {
         log.info("getUserItems by user with id={}", userId);
         userRepository.findById(userId).orElseThrow(() -> {
             log.warn("user with id={} not exist", userId);
             throw new EntityNotExistException(String.format("Пользователь с id=%d не существует.", userId));
         });
-        List<ItemBookingDto> itemBookingDtoList = itemRepository.findByOwnerId(userId).stream()
+        PageRequest pageRequest = PageRequest.of(from / size, size);
+        List<ItemBookingDto> itemBookingDtoList = itemRepository.findByOwnerId(userId, pageRequest).stream()
                 .map(ItemMapper.INSTANCE::itemToItemBookingDto)
                 .collect(Collectors.toList());
         itemBookingDtoList.forEach(this::setBookingDates);
@@ -137,12 +150,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchItem(String text) {
+    public List<ItemDto> searchItem(String text, Integer from, Integer size) {
         log.info("searchItem by text={}", text);
         if (text.isBlank()) {
             return new ArrayList<>();
         }
-        return itemRepository.searchItem(text).stream()
+        PageRequest pageRequest = PageRequest.of(from / size, size);
+        return itemRepository.searchItem(text, pageRequest).stream()
                 .map(ItemMapper.INSTANCE::itemToItemDto)
                 .collect(Collectors.toList());
     }
