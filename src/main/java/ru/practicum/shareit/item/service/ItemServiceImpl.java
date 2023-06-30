@@ -115,7 +115,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto getItemById(Long userId, Long itemId) {
+    public ItemBookingDto getItemById(Long userId, Long itemId) {
         log.info("getItemById with id={}", itemId);
         Item item = itemRepository.findById(itemId).orElseThrow(() -> {
             log.warn("item with id={} not exist", itemId);

@@ -13,7 +13,7 @@ public interface ItemService {
 
     void deleteItem(Long userId, Long itemId);
 
-    ItemDto getItemById(Long userId, Long itemId);
+    ItemBookingDto getItemById(Long userId, Long itemId);
 
     CommentDto createComment(Long userId, Long itemId, CommentDto commentDto);
 
