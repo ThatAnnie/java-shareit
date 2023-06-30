@@ -84,8 +84,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         });
         ItemRequestDto requestDto = RequestMapper.INSTANCE.requestToRequestDto(requestRepository.findById(requestId)
                 .orElseThrow(() -> {
-                    log.warn("user with id={} not exist", userId);
-                    throw new EntityNotExistException(String.format("Запрос с id=%d не существует.", userId));
+                    log.warn("request with id={} not exist", requestId);
+                    throw new EntityNotExistException(String.format("Запрос с id=%d не существует.", requestId));
                 }));
         setItems(requestDto);
         return requestDto;
