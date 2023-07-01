@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.common.CustomPageRequest;
 import ru.practicum.shareit.exception.EntityNotExistException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.CommentDto;
@@ -140,7 +141,7 @@ public class ItemServiceImpl implements ItemService {
             log.warn("user with id={} not exist", userId);
             throw new EntityNotExistException(String.format("Пользователь с id=%d не существует.", userId));
         });
-        PageRequest pageRequest = PageRequest.of(from / size, size);
+        PageRequest pageRequest = new CustomPageRequest(from, size);
         List<ItemBookingDto> itemBookingDtoList = itemRepository.findByOwnerId(userId, pageRequest).stream()
                 .map(ItemMapper.INSTANCE::itemToItemBookingDto)
                 .collect(Collectors.toList());
@@ -155,7 +156,7 @@ public class ItemServiceImpl implements ItemService {
         if (text.isBlank()) {
             return new ArrayList<>();
         }
-        PageRequest pageRequest = PageRequest.of(from / size, size);
+        PageRequest pageRequest = new CustomPageRequest(from, size);
         return itemRepository.searchItem(text, pageRequest).stream()
                 .map(ItemMapper.INSTANCE::itemToItemDto)
                 .collect(Collectors.toList());

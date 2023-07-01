@@ -61,9 +61,9 @@ public class ItemServiceImplTest {
         itemDto.setRequestId(createdRequest.getId());
         ItemDto createdItemDto = itemService.createItem(createdUser.getId(), itemDto);
         ItemDto readItemDto = itemService.getItemById(createdUser.getId(), createdItemDto.getId());
-        assertEquals("test", readItemDto.getName());
-        assertEquals("test description", readItemDto.getDescription());
-        assertTrue(readItemDto.getAvailable());
+        assertEquals("test", readItemDto.getName(), "Имя вещи не совпадает.");
+        assertEquals("test description", readItemDto.getDescription(), "Описание вещи не совпадает.");
+        assertTrue(readItemDto.getAvailable(), "Вещь недоступна.");
     }
 
     @Test
@@ -92,8 +92,8 @@ public class ItemServiceImplTest {
         newItemDto.setAvailable(true);
         ItemDto updatedItemDto = itemService.updateItem(createdUser.getId(), createdItemDto.getId(), newItemDto);
 
-        assertEquals("test2", updatedItemDto.getName());
-        assertEquals("test2 description", updatedItemDto.getDescription());
+        assertEquals("test2", updatedItemDto.getName(), "Имя вещи не совпадает.");
+        assertEquals("test2 description", updatedItemDto.getDescription(), "Описание вещи не совпадает.");
     }
 
     @Test
@@ -144,9 +144,9 @@ public class ItemServiceImplTest {
         ItemDto createdItemDto = itemService.createItem(createdUser.getId(), itemDto);
         List<ItemBookingDto> items = itemService.getUserItems(createdUser.getId(), 0, 10);
 
-        assertEquals(createdItemDto.getDescription(), items.get(0).getDescription());
-        assertEquals(createdItemDto.getName(), items.get(0).getName());
-        assertEquals(1, items.size());
+        assertEquals(createdItemDto.getDescription(), items.get(0).getDescription(), "Описание вещи не совпадает.");
+        assertEquals(createdItemDto.getName(), items.get(0).getName(), "Имя вещи не совпадает.");
+        assertEquals(1, items.size(), "Размер списка не совпадает.");
     }
 
     @Test
@@ -175,8 +175,8 @@ public class ItemServiceImplTest {
         bookingService.approveBooking(createdUser.getId(), nextBookingDto.getId(), true);
         ItemBookingDto readItem = itemService.getItemById(createdUser.getId(), createdItemDto.getId());
 
-        assertEquals(lastBookingDto.getId(), readItem.getLastBooking().getId());
-        assertEquals(nextBookingDto.getId(), readItem.getNextBooking().getId());
+        assertEquals(lastBookingDto.getId(), readItem.getLastBooking().getId(), "Id последнего бронирования не совпадает.");
+        assertEquals(nextBookingDto.getId(), readItem.getNextBooking().getId(),"Id следующего бронирования не совпадает.");
     }
 
     @Test
@@ -191,9 +191,9 @@ public class ItemServiceImplTest {
         UserDto createdUser = userService.createUser(userDto);
         ItemDto createdItemDto = itemService.createItem(createdUser.getId(), itemDto);
         List<ItemDto> items = itemService.searchItem("test", 0, 10);
-        assertEquals(createdItemDto.getDescription(), items.get(0).getDescription());
-        assertEquals(createdItemDto.getName(), items.get(0).getName());
-        assertEquals(1, items.size());
+        assertEquals(createdItemDto.getDescription(), items.get(0).getDescription(), "Описание не совпадает.");
+        assertEquals(createdItemDto.getName(), items.get(0).getName(), "Имя не совпадает.");
+        assertEquals(1, items.size(), "Размер списка не совпадает.");
     }
 
     @Test
@@ -223,7 +223,7 @@ public class ItemServiceImplTest {
         bookingService.createBooking(otherUserDto.getId(), bookingDto);
         itemService.createComment(otherUserDto.getId(), createdItemDto.getId(), commentDto);
         ItemBookingDto readItemDto = itemService.getItemById(createdUser.getId(), createdItemDto.getId());
-        assertEquals("comment", readItemDto.getComments().get(0).getText());
+        assertEquals("comment", readItemDto.getComments().get(0).getText(), "Текст комментария не совпадает.");
     }
 
     @Test

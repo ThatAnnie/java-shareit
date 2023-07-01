@@ -6,11 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.EntityNotExistException;
-import ru.practicum.shareit.item.dto.ItemBookingDto;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -24,11 +20,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class ItemRequestServiceImplTest {
-    private final ItemService itemService;
     private final UserService userService;
     private final ItemRequestService requestService;
-    private final BookingService bookingService;
-    private ItemDto itemDto;
     private UserDto userDto;
     private ItemRequestDto requestDto;
 
@@ -40,12 +33,6 @@ public class ItemRequestServiceImplTest {
         userDto.setName("test");
         userDto.setEmail("test@test.ru");
 
-        itemDto = new ItemBookingDto();
-        itemDto.setId(1L);
-        itemDto.setName("test");
-        itemDto.setDescription("test description");
-        itemDto.setAvailable(true);
-
         requestDto = new ItemRequestDto();
         requestDto.setDescription("test");
     }
@@ -55,7 +42,7 @@ public class ItemRequestServiceImplTest {
         UserDto createdUser = userService.createUser(userDto);
         ItemRequestDto createdRequest = requestService.createRequest(createdUser.getId(), requestDto);
         ItemRequestDto readRequest = requestService.getRequestById(createdUser.getId(), createdRequest.getId());
-        assertEquals("test", readRequest.getDescription());
+        assertEquals("test", readRequest.getDescription(), "Описание не совпадает.");
     }
 
     @Test
@@ -70,8 +57,8 @@ public class ItemRequestServiceImplTest {
         UserDto createdUser = userService.createUser(userDto);
         requestService.createRequest(createdUser.getId(), requestDto);
         List<ItemRequestDto> requests = requestService.getRequestsByUser(createdUser.getId());
-        assertEquals(1, requests.size());
-        assertEquals("test", requests.get(0).getDescription());
+        assertEquals(1, requests.size(), "Размер списка не совпадает.");
+        assertEquals("test", requests.get(0).getDescription(), "Описание не совпадает.");
     }
 
     @Test
@@ -91,7 +78,7 @@ public class ItemRequestServiceImplTest {
         userDto.setEmail("newtest@test.ru");
         UserDto otherUserDto = userService.createUser(newUserDto);
         List<ItemRequestDto> requests = requestService.getAllRequests(otherUserDto.getId(), 0, 10);
-        assertEquals(1, requests.size());
+        assertEquals(1, requests.size(), "Размер списка не совпадает.");
         assertEquals("test", requests.get(0).getDescription());
     }
 

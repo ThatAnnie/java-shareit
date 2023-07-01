@@ -12,6 +12,7 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.common.CustomPageRequest;
 import ru.practicum.shareit.exception.EntityNotExistException;
 import ru.practicum.shareit.exception.OperationNotAllowed;
 import ru.practicum.shareit.exception.StateIsNotSupportedException;
@@ -115,7 +116,7 @@ public class BookingServiceImpl implements BookingService {
             log.warn("unknown state {}", state);
             throw new StateIsNotSupportedException(String.format("Unknown state: %s", state));
         }
-        PageRequest pageRequest = PageRequest.of(from / size, size);
+        PageRequest pageRequest = new CustomPageRequest(from, size);
         List<Booking> bookingList;
         switch (bookingState) {
             case ALL:
@@ -158,7 +159,7 @@ public class BookingServiceImpl implements BookingService {
             log.warn("unknown state {}", state);
             throw new StateIsNotSupportedException(String.format("Unknown state: %s", state));
         }
-        PageRequest pageRequest = PageRequest.of(from / size, size);
+        PageRequest pageRequest = new CustomPageRequest(from, size);
         List<Booking> bookingList;
         switch (bookingState) {
             case ALL:

@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
@@ -25,15 +26,41 @@ public class BookingDtoTest {
     private JacksonTester<BookingResponseDto> jacksonTesterResponseDto;
     @Autowired
     private JacksonTester<BookingForItemDto> jacksonTesterDtoForItem;
+    private BookingDto bookingDto;
+    private BookingForItemDto bookingForItemDto;
+    private ItemDto itemDto;
+    private UserDto userDto;
 
-    @Test
-    void testJsonBookingDto() throws Exception {
-        BookingDto bookingDto = new BookingDto();
+
+
+    @BeforeEach
+    void setUp() {
+        bookingDto = new BookingDto();
         bookingDto.setStart(LocalDateTime.of(2023, 1, 10, 14, 0, 0));
         bookingDto.setEnd(LocalDateTime.of(2023, 2, 10, 14, 0, 0));
         bookingDto.setItemId(1L);
         bookingDto.setId(1L);
 
+        bookingForItemDto = new BookingForItemDto();
+        bookingForItemDto.setId(1L);
+        bookingForItemDto.setStart(LocalDateTime.of(2023, 1, 10, 14, 0, 0));
+        bookingForItemDto.setEnd(LocalDateTime.of(2023, 2, 10, 14, 0, 0));
+        bookingForItemDto.setBookerId(1L);
+
+        userDto = new UserDto();
+        userDto.setId(1L);
+        userDto.setName("test");
+        userDto.setEmail("test@test.ru");
+
+        itemDto = new ItemBookingDto();
+        itemDto.setId(1L);
+        itemDto.setName("test");
+        itemDto.setDescription("test description");
+        itemDto.setAvailable(true);
+    }
+
+    @Test
+    void testJsonBookingDto() throws Exception {
         JsonContent<BookingDto> result = jacksonTesterDto.write(bookingDto);
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(1);
         assertThat(result).extractingJsonPathNumberValue("$.itemId").isEqualTo(1);
@@ -43,17 +70,6 @@ public class BookingDtoTest {
 
     @Test
     void testJsonBookingResponseDto() throws Exception {
-        UserDto userDto = new UserDto();
-        userDto.setId(1L);
-        userDto.setName("test");
-        userDto.setEmail("test@test.ru");
-
-        ItemDto itemDto = new ItemBookingDto();
-        itemDto.setId(1L);
-        itemDto.setName("test");
-        itemDto.setDescription("test description");
-        itemDto.setAvailable(true);
-
         BookingResponseDto bookingResponseDto = new BookingResponseDto();
         bookingResponseDto.setId(1L);
         bookingResponseDto.setStart(LocalDateTime.of(2023, 1, 10, 14, 0, 0));
@@ -71,23 +87,6 @@ public class BookingDtoTest {
 
     @Test
     void testJsonBookingForItemDto() throws Exception {
-        UserDto userDto = new UserDto();
-        userDto.setId(1L);
-        userDto.setName("test");
-        userDto.setEmail("test@test.ru");
-
-        ItemDto itemDto = new ItemBookingDto();
-        itemDto.setId(1L);
-        itemDto.setName("test");
-        itemDto.setDescription("test description");
-        itemDto.setAvailable(true);
-
-        BookingForItemDto bookingForItemDto = new BookingForItemDto();
-        bookingForItemDto.setId(1L);
-        bookingForItemDto.setStart(LocalDateTime.of(2023, 1, 10, 14, 0, 0));
-        bookingForItemDto.setEnd(LocalDateTime.of(2023, 2, 10, 14, 0, 0));
-        bookingForItemDto.setBookerId(1L);
-
         JsonContent<BookingForItemDto> result = jacksonTesterDtoForItem.write(bookingForItemDto);
         assertThat(result).extractingJsonPathNumberValue("$.id").isEqualTo(1);
         assertThat(result).extractingJsonPathStringValue("$.start").isEqualTo("2023-01-10T14:00:00");

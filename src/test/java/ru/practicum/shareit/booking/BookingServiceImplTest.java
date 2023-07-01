@@ -233,20 +233,20 @@ public class BookingServiceImplTest {
         BookingResponseDto responseBooking = bookingService.createBooking(otherUserDto.getId(), bookingDto);
         List<BookingResponseDto> bookingsWaiting = bookingService.getBookingsByUser(otherUserDto.getId(),
                 State.WAITING.name(), 0, 10);
-        assertEquals(responseBooking, bookingsWaiting.get(0));
-        assertEquals(1, bookingsWaiting.size());
+        assertEquals(responseBooking, bookingsWaiting.get(0), "Вещь в результате поиска по статусу WAITING не совпадает.");
+        assertEquals(1, bookingsWaiting.size(), "Размер полученного списка вещей со статусом WAITING не совпадает.");
 
         BookingResponseDto rejectedBooking = bookingService.approveBooking(createdUser.getId(), responseBooking.getId(),
                 false);
         List<BookingResponseDto> bookingsRejected = bookingService.getBookingsByUser(otherUserDto.getId(),
                 State.REJECTED.name(), 0, 10);
-        assertEquals(rejectedBooking, bookingsRejected.get(0));
-        assertEquals(1, bookingsRejected.size());
+        assertEquals(rejectedBooking, bookingsRejected.get(0), "Вещь в результате поиска по статусу REJECTED не совпадает.");
+        assertEquals(1, bookingsRejected.size(), "Размер полученного списка вещей со статусом REJECTED не совпадает.");
 
         List<BookingResponseDto> bookingsAll = bookingService.getBookingsByUser(otherUserDto.getId(),
                 State.ALL.name(), 0, 10);
-        assertEquals(rejectedBooking, bookingsAll.get(0));
-        assertEquals(1, bookingsAll.size());
+        assertEquals(rejectedBooking, bookingsAll.get(0), "Вещь в результате поиска по всем статусам не совпадает.");
+        assertEquals(1, bookingsAll.size(), "Размер полученного списка вещей со всеми статусами не совпадает.");
 
         StateIsNotSupportedException ex = assertThrows(StateIsNotSupportedException.class,
                 () -> bookingService.getBookingsByUser(otherUserDto.getId(), "TEST", 0, 10));
@@ -282,18 +282,18 @@ public class BookingServiceImplTest {
 
         List<BookingResponseDto> bookingsPast = bookingService.getBookingsByUser(otherUserDto.getId(),
                 State.PAST.name(), 0, 10);
-        assertEquals(responsePastBooking, bookingsPast.get(0));
-        assertEquals(1, bookingsPast.size());
+        assertEquals(responsePastBooking, bookingsPast.get(0), "Вещь в результате поиска в состоянии PAST не совпадает.");
+        assertEquals(1, bookingsPast.size(), "Размер полученного списка вещей в состоянии PAST не совпадает.");
 
         List<BookingResponseDto> bookingsFuture = bookingService.getBookingsByUser(otherUserDto.getId(),
                 State.FUTURE.name(), 0, 10);
-        assertEquals(responseFutureBooking, bookingsFuture.get(0));
-        assertEquals(1, bookingsFuture.size());
+        assertEquals(responseFutureBooking, bookingsFuture.get(0), "Вещь в результате поиска в состоянии FUTURE не совпадает.");
+        assertEquals(1, bookingsFuture.size(), "Размер полученного списка вещей в состоянии FUTURE не совпадает.");
 
         List<BookingResponseDto> bookingsCurrent = bookingService.getBookingsByUser(otherUserDto.getId(),
                 State.CURRENT.name(), 0, 10);
-        assertEquals(responseCurrentBooking, bookingsCurrent.get(0));
-        assertEquals(1, bookingsCurrent.size());
+        assertEquals(responseCurrentBooking, bookingsCurrent.get(0), "Вещь в результате поиска в состоянии CURRENT не совпадает.");
+        assertEquals(1, bookingsCurrent.size(), "Размер полученного списка вещей в состоянии CURRENT не совпадает.");
     }
 
     @Test
@@ -316,20 +316,20 @@ public class BookingServiceImplTest {
         BookingResponseDto responseBooking = bookingService.createBooking(otherUserDto.getId(), bookingDto);
         List<BookingResponseDto> bookingsWaiting = bookingService.getBookingsByOwner(createdUser.getId(),
                 State.WAITING.name(), 0, 10);
-        assertEquals(responseBooking, bookingsWaiting.get(0));
-        assertEquals(1, bookingsWaiting.size());
+        assertEquals(responseBooking, bookingsWaiting.get(0), "Вещь в результате поиска в состоянии WAITING не совпадает.");
+        assertEquals(1, bookingsWaiting.size(), "Размер полученного списка вещей в состоянии WAITING не совпадает.");
 
         BookingResponseDto rejectedBooking = bookingService.approveBooking(createdUser.getId(), responseBooking.getId(),
                 false);
         List<BookingResponseDto> bookingsRejected = bookingService.getBookingsByOwner(createdUser.getId(),
                 State.REJECTED.name(), 0, 10);
-        assertEquals(rejectedBooking, bookingsRejected.get(0));
-        assertEquals(1, bookingsRejected.size());
+        assertEquals(rejectedBooking, bookingsRejected.get(0), "Вещь в результате поиска в состоянии REJECTED не совпадает.");
+        assertEquals(1, bookingsRejected.size(), "Размер полученного списка вещей в состоянии REJECTED не совпадает.");
 
         List<BookingResponseDto> bookingsAll = bookingService.getBookingsByOwner(createdUser.getId(),
                 State.ALL.name(), 0, 10);
-        assertEquals(rejectedBooking, bookingsAll.get(0));
-        assertEquals(1, bookingsAll.size());
+        assertEquals(rejectedBooking, bookingsAll.get(0), "Вещь в результате поиска в любом состоянии не совпадает.");
+        assertEquals(1, bookingsAll.size(), "Размер полученного списка вещей в любом состоянии не совпадает.");
 
         StateIsNotSupportedException ex = assertThrows(StateIsNotSupportedException.class,
                 () -> bookingService.getBookingsByOwner(createdUser.getId(), "TEST", 0, 10));
@@ -365,18 +365,18 @@ public class BookingServiceImplTest {
 
         List<BookingResponseDto> bookingsPast = bookingService.getBookingsByOwner(createdUser.getId(),
                 State.PAST.name(), 0, 10);
-        assertEquals(responsePastBooking, bookingsPast.get(0));
-        assertEquals(1, bookingsPast.size());
+        assertEquals(responsePastBooking, bookingsPast.get(0), "Вещь в результате поиска в состоянии PAST не совпадает.");
+        assertEquals(1, bookingsPast.size(), "Размер полученного списка вещей в состоянии PAST не совпадает.");
 
         List<BookingResponseDto> bookingsFuture = bookingService.getBookingsByOwner(createdUser.getId(),
                 State.FUTURE.name(), 0, 10);
-        assertEquals(responseFutureBooking, bookingsFuture.get(0));
-        assertEquals(1, bookingsFuture.size());
+        assertEquals(responseFutureBooking, bookingsFuture.get(0), "Вещь в результате поиска в состоянии FUTURE не совпадает.");
+        assertEquals(1, bookingsFuture.size(), "Размер полученного списка вещей в состоянии FUTURE не совпадает.");
 
         List<BookingResponseDto> bookingsCurrent = bookingService.getBookingsByOwner(createdUser.getId(),
                 State.CURRENT.name(), 0, 10);
-        assertEquals(responseCurrentBooking, bookingsCurrent.get(0));
-        assertEquals(1, bookingsCurrent.size());
+        assertEquals(responseCurrentBooking, bookingsCurrent.get(0), "Вещь в результате поиска в состоянии CURRENT не совпадает.");
+        assertEquals(1, bookingsCurrent.size(), "Размер полученного списка вещей в состоянии CURRENT не совпадает.");
     }
 
     @Test

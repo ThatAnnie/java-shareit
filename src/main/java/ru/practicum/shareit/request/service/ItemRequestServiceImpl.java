@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.common.CustomPageRequest;
 import ru.practicum.shareit.exception.EntityNotExistException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
@@ -64,7 +65,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequestDto> getAllRequests(Long userId, Integer from, Integer size) {
-        PageRequest pageRequest = PageRequest.of(from / size, size);
+        PageRequest pageRequest = new CustomPageRequest(from, size);
         userRepository.findById(userId).orElseThrow(() -> {
             log.warn("user with id={} not exist", userId);
             throw new EntityNotExistException(String.format("Пользователь с id=%d не существует.", userId));

@@ -60,8 +60,8 @@ public class UserServiceImplTest {
         newUserDto.setEmail("newtest@test.ru");
         userService.updateUser(createdUser.getId(), newUserDto);
         UserDto updatedUserDto = userService.getUserById(createdUser.getId());
-        assertEquals("Test2", updatedUserDto.getName());
-        assertEquals("newtest@test.ru", updatedUserDto.getEmail());
+        assertEquals("Test2", updatedUserDto.getName(), "Имя не совпадает.");
+        assertEquals("newtest@test.ru", updatedUserDto.getEmail(), "Email не совпадает.");
     }
 
     @Test
