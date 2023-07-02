@@ -11,6 +11,8 @@ import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.item.validationgroup.CreateGroup;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
@@ -48,14 +50,18 @@ public class ItemController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ItemBookingDto> getUserItems(@RequestHeader(USER_HEADER) Long userId) {
-        return itemService.getUserItems(userId);
+    public List<ItemBookingDto> getUserItems(@RequestHeader(USER_HEADER) Long userId,
+                                             @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+                                             @Positive @RequestParam(defaultValue = "10") Integer size) {
+        return itemService.getUserItems(userId, from, size);
     }
 
     @GetMapping("/search")
     @ResponseStatus(HttpStatus.OK)
-    public List<ItemDto> searchItem(@RequestParam String text) {
-        return itemService.searchItem(text);
+    public List<ItemDto> searchItem(@RequestParam String text,
+                                    @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+                                    @Positive @RequestParam(defaultValue = "10") Integer size) {
+        return itemService.searchItem(text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")
