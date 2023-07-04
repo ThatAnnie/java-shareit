@@ -37,13 +37,13 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<Object> getUserById (@PathVariable Long userId) {
+    public ResponseEntity<Object> getUserById(@PathVariable Long userId) {
         log.info("Get user with userId={}", userId);
         return userClient.getUserById(userId);
     }
 
     @GetMapping
-    public ResponseEntity<Object> getUsers () {
+    public ResponseEntity<Object> getUsers() {
         log.info("Get users");
         return userClient.getUsers();
     }
